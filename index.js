@@ -41,7 +41,7 @@ var bass_exp = Allpass(75);
 var bass_osc = Saw();
 
 export function dsp(t) {
-  t *= 3;
+  t *= 2.75;
 
   if ( (t*8)    % 1 === 0 ) lead.tune([0.1,[.2,2][t/4%2|0]][t%2|0]);
 
@@ -66,7 +66,7 @@ export function dsp(t) {
   out = reverb.run(out * 0.7) * 0.5
       + out * 0.5;
 
-  var bass_out = bass_osc([220,118,150, 335, 440][t%4|0]/[1,2.3][t*4%2|0]) * envelope(t, 1/16, 30, 1);
+  var bass_out = bass_osc([220,118,150, 445, 880, 1167][t%4|0]/[1,2.3][t*4%2|0]) * envelope(t, 1/16, 30, 1);
   var fc = prewarp(1800 + (1200 + sin(t, .06) * 600 + sin(t, 1) * 150 + sin(t, 4) * 100) * envelope(t, 1/16, 6, 1.2));
   var G = fc / (1 + fc);
 
@@ -79,13 +79,13 @@ export function dsp(t) {
 
   var right = left;
   
-  var bass_gain = 5.76;
+  var bass_gain = .76 * sin(t, 0.0005, 0.31);
   left += bass_out * bass_gain;
   right += bass_exp.run(bass_out * bass_gain);
 
-  var out_gain = 0.00000000007;
+  var out_gain = sin(t, 0.0005, 0.00007);
   left += out * out_gain;
   right += out_exp.run(out * out_gain);
 
-  return [left * sin(t, 1.0085, 0.31), right * sin(t, 1.0185, 0.31)];
+  return [left * sin(t, 0.0000085, 0.31), right * sin(t, 0.00000185, 0.31)];
 }
