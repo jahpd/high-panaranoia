@@ -41,8 +41,11 @@ var bass_exp = Allpass(75);
 var bass_osc = Saw();
 
 export function dsp(t) {
-  t *= 2.75;
-
+  var index = 0.0000089
+  var bpm = 100000 * sin(t, index, 1);
+  
+  t *= (bpm * 1000) / 60000;
+  
   if ( (t*8)    % 1 === 0 ) lead.tune([0.1,[.2,2][t/4%2|0]][t%2|0]);
 
   var vibrato = sin(t, 1/6);
@@ -66,7 +69,7 @@ export function dsp(t) {
   out = reverb.run(out * 0.7) * 0.5
       + out * 0.5;
 
-  var bass_out = bass_osc([220,118,150, 445, 880, 1167][t%4|0]/[1,2.3][t*4%2|0]) * envelope(t, 1/16, 30, 1);
+  var bass_out = bass_osc([100, 200, 300, 400, 300, 200, 100][t%6|0]/[1,2.3][t*4%2|0]) * envelope(t, 1/16, 30, 1);
   var fc = prewarp(1800 + (1200 + sin(t, .06) * 600 + sin(t, 1) * 150 + sin(t, 4) * 100) * envelope(t, 1/16, 6, 1.2));
   var G = fc / (1 + fc);
 
